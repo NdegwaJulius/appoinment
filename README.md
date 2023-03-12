@@ -40,11 +40,11 @@ Zapier will send a webhook to this URL every time a new appointment is booked.
 # Functions
 Here is a brief explanation of what each function does:
 
-my_appointment_plugin_register_post_type() registers a custom post type called 'appointment'.
-my_appointment_plugin_add_meta_box() adds a meta box to the appointment post type that allows users to enter details about the appointment.
-my_appointment_plugin_meta_box_callback() is the callback function that renders the appointment meta box.
-my_appointment_plugin_save_meta_box() saves the appointment meta box data when the appointment is saved.
-my_appointment_plugin_shortcode() creates a shortcode that displays the appointment booking form.
-my_appointment_plugin_submit_form() handles the form submission and creates a new appointment post with the submitted data.
+- my_appointment_plugin_register_post_type() registers a custom post type called 'appointment'.
+- my_appointment_plugin_add_meta_box() adds a meta box to the appointment post type that allows users to enter details about the appointment.
+- my_appointment_plugin_meta_box_callback() is the callback function that renders the appointment meta box.
+- my_appointment_plugin_save_meta_box() saves the appointment meta box data when the appointment is saved.
+- my_appointment_plugin_shortcode() creates a shortcode that displays the appointment booking form.
+- my_appointment_plugin_submit_form() handles the form submission and creates a new appointment post with the submitted data.
 This plugin provides a simple way for users to book appointments and for admin to manage the appointments. 
 Additionally, it sends customized emails to the users with the appointment details and integrates with Zapier, making it easy to connect to other services.
