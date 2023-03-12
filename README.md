@@ -46,5 +46,8 @@ Here is a brief explanation of what each function does:
 - my_appointment_plugin_save_meta_box() saves the appointment meta box data when the appointment is saved.
 - my_appointment_plugin_shortcode() creates a shortcode that displays the appointment booking form.
 - my_appointment_plugin_submit_form() handles the form submission and creates a new appointment post with the submitted data.
+
+
+## More 
 This plugin provides a simple way for users to book appointments and for admin to manage the appointments. 
 Additionally, it sends customized emails to the users with the appointment details and integrates with Zapier, making it easy to connect to other services.
