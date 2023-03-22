@@ -3,7 +3,7 @@
 Plugin Name: Appointment Booking Plugin
 Plugin URI: https://example.com/appointment-booking-plugin/
 Description: A plugin that allows users to book appointments on the front-end, and admin to view the list of appointments that have been placed, sends a customized email to the user containing details of the appointment placed and details of the location for the appointment, and integrates with Zapier.
-Version: 1.0
+Version: 1.0.1
 Author: Julius Ndegwa
 Author URI: https://example.com/
 License: GPL2
