@@ -172,37 +172,67 @@ function my_plugin_enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'my_plugin_enqueue_scripts');
 
+// Enqueue Select2 CSS and JS
+function my_appointment_booking_form_enqueue_scripts() {
+  wp_enqueue_style( 'select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/css/select2.min.css' );
+  wp_enqueue_script( 'select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js', array( 'jquery' ), '', true );
+}
+add_action( 'wp_enqueue_scripts', 'my_appointment_booking_form_enqueue_scripts' );
 
 function my_appointment_booking_form_shortcode() {
   ob_start();
   ?>
-  <form method="post" action="" class="form">
-    <div class="form-group">
-      <label for="appointment_date"><?php esc_html_e('Date:', 'my-appointment-plugin'); ?></label><br>
-      <input type="date" id="appointment_date" name="appointment_date" class="form-control" required><br>
-    </div>
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#appointmentModal">
+    <?php esc_attr_e('Book Appointment', 'my-appointment-plugin'); ?>
+  </button>
 
-    <div class="form-group">
-      <label for="appointment_time"><?php esc_html_e('Time:', 'my-appointment-plugin'); ?></label><br>
-      <input type="time" id="appointment_time" name="appointment_time" class="form-control" required><br>
-    </div>
+  <!-- Modal -->
+  <div class="modal fade" id="appointmentModal" tabindex="-1" role="dialog" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="appointmentModalLabel"><?php esc_attr_e('Book Appointment', 'my-appointment-plugin'); ?></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="<?php esc_attr_e('Close', 'my-appointment-plugin'); ?>">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="">
+            <div class="form-group">
+              <label for="appointment_date"><?php esc_html_e('Date:', 'my-appointment-plugin'); ?></label>
+              <input type="date" id="appointment_date" name="appointment_date" class="form-control" required>
+            </div>
 
-    <div class="form-group">
-      <label for="appointment_location"><?php esc_html_e('Location:', 'my-appointment-plugin'); ?></label><br>
-      <input type="text" id="appointment_location" name="appointment_location" class="form-control" required><br>
-    </div>
+            <div class="form-group">
+              <label for="appointment_time"><?php esc_html_e('Time:', 'my-appointment-plugin'); ?></label>
+              <input type="time" id="appointment_time" name="appointment_time" class="form-control" required>
+            </div>
 
-    <div class="form-group">
-      <label for="appointment_user_email"><?php esc_html_e('Email:', 'my-appointment-plugin'); ?></label><br>
-      <input type="email" id="appointment_user_email" name="appointment_user_email" class="form-control" required><br>
-    </div>
+            <div class="form-group">
+              <label for="appointment_location"><?php esc_html_e('Location:', 'my-appointment-plugin'); ?></label>
+              <input type="text" id="appointment_location" name="appointment_location" class="form-control" required>
+            </div>
 
-    <input type="submit" name="submit_appointment_booking" value="<?php esc_attr_e('Book Appointment', 'my-appointment-plugin'); ?>" class="btn btn-primary"><br>
-  </form>
+            <div class="form-group">
+              <label for="appointment_user_email"><?php esc_html_e('Email:', 'my-appointment-plugin'); ?></label>
+              <input type="email" id="appointment_user_email" name="appointment_user_email" class="form-control" required>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php esc_attr_e('Close', 'my-appointment-plugin'); ?></button>
+              <input type="submit" name="submit_appointment_booking" value="<?php esc_attr_e('Book Appointment', 'my-appointment-plugin'); ?>" class="btn btn-primary">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
   <?php
   return ob_get_clean();
 }
 add_shortcode('my_appointment_booking_form', 'my_appointment_booking_form_shortcode');
+
 
 function my_appointment_plugin_appointments_page() {
   global $wpdb;
