@@ -3,7 +3,7 @@
 Plugin Name: Appointment Booking Plugin
 Plugin URI: https://example.com/appointment-booking-plugin/
 Description: A plugin that allows users to book appointments on the front-end, and admin to view the list of appointments that have been placed, sends a customized email to the user containing details of the appointment placed and details of the location for the appointment, and integrates with Zapier.
-Version: 1.0.1
+Version: 1.0
 Author: Julius Ndegwa
 Author URI: https://example.com/
 License: GPL2
@@ -116,12 +116,22 @@ function my_appointment_plugin_save_meta_box($post_id) {
     'post_type' => 'appointment',
     'post_status' => 'publish',
   );
-  $post_id = wp_insert_post($appointment_post);
+//   $post_id = wp_insert_post($appointment_post);
   
-  update_post_meta($post_id, '_appointment_date', $appointment_date);
-  update_post_meta($post_id, '_appointment_time', $appointment_time);
-  update_post_meta($post_id, '_appointment_location', $appointment_location);
-  update_post_meta($post_id, '_appointment_user_email', $appointment_user_email);
+//   update_post_meta($post_id, '_appointment_date', $appointment_date);
+//   update_post_meta($post_id, '_appointment_time', $appointment_time);
+//   update_post_meta($post_id, '_appointment_location', $appointment_location);
+//   update_post_meta($post_id, '_appointment_user_email', $appointment_user_email);
+$post_id = wp_insert_post($appointment_post);
+
+update_post_meta($post_id, '_appointment_date', $appointment_date);
+update_post_meta($post_id, '_appointment_time', $appointment_time);
+update_post_meta($post_id, '_appointment_location', $appointment_location);
+update_post_meta($post_id, '_appointment_user_email', $appointment_user_email);
+
+wp_redirect(get_permalink(get_page_by_title('Appointment Booked')));
+exit;
+
   
   // Send email to user
   $to = $appointment_user_email;
@@ -153,55 +163,47 @@ wp_insert_post($success_post);
 }
 register_activation_hook(FILE, 'my_appointment_plugin_add_success_page');
 
-// Integrate with Zapier
-function my_appointment_plugin_zapier_integration() {
-  $trigger_url = 'https://zapier.com/hooks/catch/123456/abcde/';
-
-if (isset($_POST['submit_appointment_booking'])) {
-$appointment_date = sanitize_text_field($_POST['appointment_date']);
-$appointment_time = sanitize_text_field($_POST['appointment_time']);
-$appointment_location = sanitize_text_field($_POST['appointment_location']);
-$appointment_user_email = sanitize_email($_POST['appointment_user_email']);
-$appointment_data = array(
-  'appointment_date' => $appointment_date,
-  'appointment_time' => $appointment_time,
-  'appointment_location' => $appointment_location,
-  'appointment_user_email' => $appointment_user_email,
-);
-
-$response = wp_remote_post($trigger_url, array(
-  'body' => $appointment_data,
-));
-
-if (is_wp_error($response)) {
-  error_log($response->get_error_message());
+function my_plugin_enqueue_scripts() {
+    // Enqueue Bootstrap CSS
+    wp_enqueue_style('bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css', array(), '4.3.1', 'all');
+    
+    // Enqueue Bootstrap JS
+    wp_enqueue_script('bootstrap-js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js', array('jquery'), '4.3.1', true);
 }
-}
-}
-add_action('init', 'my_appointment_plugin_zapier_integration');
+add_action('wp_enqueue_scripts', 'my_plugin_enqueue_scripts');
+
 
 function my_appointment_booking_form_shortcode() {
   ob_start();
   ?>
-  <form method="post" action="">
-    <label for="appointment_date"><?php esc_html_e('Date:', 'my-appointment-plugin'); ?></label>
-    <input type="date" id="appointment_date" name="appointment_date" required>
+  <form method="post" action="" class="form">
+    <div class="form-group">
+      <label for="appointment_date"><?php esc_html_e('Date:', 'my-appointment-plugin'); ?></label><br>
+      <input type="date" id="appointment_date" name="appointment_date" class="form-control" required><br>
+    </div>
 
-    <label for="appointment_time"><?php esc_html_e('Time:', 'my-appointment-plugin'); ?></label>
-    <input type="time" id="appointment_time" name="appointment_time" required>
+    <div class="form-group">
+      <label for="appointment_time"><?php esc_html_e('Time:', 'my-appointment-plugin'); ?></label><br>
+      <input type="time" id="appointment_time" name="appointment_time" class="form-control" required><br>
+    </div>
 
-    <label for="appointment_location"><?php esc_html_e('Location:', 'my-appointment-plugin'); ?></label>
-    <input type="text" id="appointment_location" name="appointment_location" required>
+    <div class="form-group">
+      <label for="appointment_location"><?php esc_html_e('Location:', 'my-appointment-plugin'); ?></label><br>
+      <input type="text" id="appointment_location" name="appointment_location" class="form-control" required><br>
+    </div>
 
-    <label for="appointment_user_email"><?php esc_html_e('Email:', 'my-appointment-plugin'); ?></label>
-    <input type="email" id="appointment_user_email" name="appointment_user_email" required>
+    <div class="form-group">
+      <label for="appointment_user_email"><?php esc_html_e('Email:', 'my-appointment-plugin'); ?></label><br>
+      <input type="email" id="appointment_user_email" name="appointment_user_email" class="form-control" required><br>
+    </div>
 
-    <input type="submit" name="submit_appointment_booking" value="<?php esc_attr_e('Book Appointment', 'my-appointment-plugin'); ?>">
+    <input type="submit" name="submit_appointment_booking" value="<?php esc_attr_e('Book Appointment', 'my-appointment-plugin'); ?>" class="btn btn-primary"><br>
   </form>
   <?php
   return ob_get_clean();
 }
 add_shortcode('my_appointment_booking_form', 'my_appointment_booking_form_shortcode');
+
 function my_appointment_plugin_appointments_page() {
   global $wpdb;
 
@@ -272,31 +274,31 @@ wp_mail($to, $subject, $message);
 }
 
 // Function to integrate with Zapier
-// function my_appointment_plugin_zapier_integration($args) {
-// global $wpdb;
+function my_appointment_plugin_zapier_integration($args) {
+global $wpdb;
 
-// $appointments_table_name = $wpdb->prefix . 'my_appointment_plugin_appointments';
+$appointments_table_name = $wpdb->prefix . 'my_appointment_plugin_appointments';
 
-// $data = array(
-// 'appointment_date' => $args['appointment_date'],
-// 'appointment_time' => $args['appointment_time'],
-// 'appointment_location' => $args['appointment_location'],
-// 'appointment_user_email' => $args['appointment_user_email']
-// );
+$data = array(
+'appointment_date' => $args['appointment_date'],
+'appointment_time' => $args['appointment_time'],
+'appointment_location' => $args['appointment_location'],
+'appointment_user_email' => $args['appointment_user_email']
+);
 
-// $wpdb->insert($appointments_table_name, $data);
+$wpdb->insert($appointments_table_name, $data);
 
-// $appointment_id = $wpdb->insert_id;
+$appointment_id = $wpdb->insert_id;
 
-// my_appointment_plugin_send_email($appointment_id);
-// }
+my_appointment_plugin_send_email($appointment_id);
+}
 
-// add_action('rest_api_init', function () {
-// register_rest_route('my-appointment-plugin/v1', 'book-appointment', array(
-// 'methods' => 'POST',
-// 'callback' => 'my_appointment_plugin_zapier_integration',
-// ));
-// });
+add_action('rest_api_init', function () {
+register_rest_route('my-appointment-plugin/v1', 'book-appointment', array(
+'methods' => 'POST',
+'callback' => 'my_appointment_plugin_zapier_integration',
+));
+});
 // Shortcode to display appointment booking form on front-end
 function my_appointment_plugin_booking_form_shortcode() {
   ob_start();
